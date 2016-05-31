@@ -16,11 +16,11 @@ from array import *
 from pomegranate import *
 
 def calcolo_vettore_pi():
-    # inizializza vettore probabilit iniziali
+    # inizializza vettore probabilità iniziali
     vettorePi = {"a": 0, "b": 0, "c": 0, "d": 0, "e": 0, "f": 0, "g": 0, "h": 0, "i": 0, "j": 0, "k": 0,
                  "l": 0, "m": 0, "n": 0, "o": 0, "p": 0, "q": 0, "r": 0, "s": 0, "t": 0, "u": 0, "v": 0,
                  "w": 0, "x": 0, "y": 0, "z": 0}
-    tweets = open("./PerturbazioneTweet/training_puliti.txt", "r")  # apro il file dei tweet
+    tweets = open("../FileTestuali/training_puliti.txt", "r")  # apro il file dei tweet
     number = 0
     for line in tweets.readlines():  # itero su ogni riga del file
         number += 1
@@ -43,7 +43,7 @@ def calcolo_vettore_pi():
 
 def calcolo_matrice_transizioni():
     # Apro il file dei tweet puliti
-    tweets = open("./PerturbazioneTweet/training_puliti.txt", "r")
+    tweets = open("../FileTestuali/training_puliti.txt", "r")
 
     number = 0
     # Definisco una matrice di supporto 27x27
@@ -73,7 +73,7 @@ def calcolo_matrice_transizioni():
 # CALCOLO DELLA MATRICE DELLE OSSERVAZIONI O (probabilità di osservare qualcosa dato che sono in uno stato)
 
 def calcolo_matrice_osservazioni():
-    tweets = open("./PerturbazioneTweet/training_sporchi.txt", "r")
+    tweets = open("../FileTestuali/training_sporchi.txt", "r")
     # Definisco una matrice di supporto 27x27
     matrice_O = numpy.zeros((27, 27))
     # Conto il numero di volte in cui da una lettera vado in un'altra lettera
