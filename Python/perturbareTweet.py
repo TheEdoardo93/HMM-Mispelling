@@ -6,9 +6,9 @@ import random
 import string
 
 #Leggo il file .txt contenente i tweet puliti
-tweets = open("tweet_puliti.txt", "r")
+tweets = open("../FileTestuali/tweet_puliti.txt", "r")
 #Apro il file .txt che conterrà i tweet perturbati
-write_file = open("tweet_sporchi.txt", "w")
+write_file = open("../FileTestuali/tweet_sporchi.txt", "w")
 dict_neighbors = {"q": "qwsxz", "w": "qasde", "e": "wsdfr", "r": "edfgt", "t": "rfghy", "y": "tghju", "u": "yhjki", "i": "ujklo",
                   "o": "iklp", "p": "ol", "a": "qwsxz", "s": "qazxcdew", "d": "wsxcvfre", "f": "edcvbgtr", "g": "rfvbnhyt",
                   "h": "tgbnmjuy", "j": "yhnmkiu", "k": "ujmloi", "l": "poik", "z": "asx", "x": "zasdc", "c": "xsdfv",
@@ -44,23 +44,22 @@ write_file.close() #chiusura del file .txt contenente i tweet perturbati
 
 #Dividere i testi in training (80%) e in testing (20%)
 
-tweets_puliti = open("tweet_puliti.txt", "r")
-tweets_sporchi = open("tweet_sporchi.txt", "r")
+tweets_puliti = open("../FileTestuali/tweet_puliti.txt", "r")
+tweets_sporchi = open("../FileTestuali/tweet_sporchi.txt", "r")
 
 #Conto il numero di tweet presenti nel file .txt
-num_lines = sum(1 for line in open('tweet_puliti.txt'))
+num_lines = sum(1 for line in open('../FileTestuali/tweet_puliti.txt'))
 
 #Calcolo l'80% di num_lines e calcolo il 20% di num_lines
 num_lines_training = int(0.8 * num_lines)
 num_lines_testing = (num_lines - num_lines_training)
 
-
 #Divido in base al seguente criterio: 80% di num_lines va in training.txt e 20% rimanente di num_lines va in testing.txt
 
-training_file_puliti = open("training_puliti.txt", "w")
-testing_file_puliti = open("testing_puliti.txt", "w")
-training_file_sporchi = open("training_sporchi.txt", "w")
-testing_file_sporchi = open("testing_sporchi.txt", "w")
+training_file_puliti = open("../FileTestuali/training_puliti.txt", "w")
+testing_file_puliti = open("../FileTestuali/testing_puliti.txt", "w")
+training_file_sporchi = open("../FileTestuali/training_sporchi.txt", "w")
+testing_file_sporchi = open("../FileTestuali/testing_sporchi.txt", "w")
 
 number_of_line = 1
 for line in tweets_puliti.readlines():
