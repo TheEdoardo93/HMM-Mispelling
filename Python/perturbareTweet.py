@@ -6,7 +6,7 @@ import random
 import string
 
 #Leggo il file .txt contenente i tweet puliti
-tweets = open("FileTestuali/tweet_puliti.txt", "r")
+tweets = open("tweet_puliti.txt", "r")
 #Apro il file .txt che conterrà i tweet perturbati
 write_file = open("tweet_sporchi.txt", "w")
 dict_neighbors = {"q": "qwsxz", "w": "qasde", "e": "wsdfr", "r": "edfgt", "t": "rfghy", "y": "tghju", "u": "yhjki", "i": "ujklo",
