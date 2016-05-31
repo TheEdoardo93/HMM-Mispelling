@@ -1,35 +1,26 @@
 #coding: utf-8
-# Belingheri Omar 761702
-# Casiraghi Edoardo 762987
-# Khayam Adam 761763
-
-"""Progetto di Modelli Probabilistici per le Decisioni - Mispelling (4)"""
-
-#-----------------------------------------------------------------------------------------------------------------------#
-
-# CALCOLO DEL VETTORE PI (probabilità iniziali delle lettere)
-
 
 from numpy import character
 import numpy
 from array import *
 from pomegranate import *
+import json
+import ast
 
 def calcolo_vettore_pi():
-    # inizializza vettore probabilità iniziali
     vettorePi = {"a": 0, "b": 0, "c": 0, "d": 0, "e": 0, "f": 0, "g": 0, "h": 0, "i": 0, "j": 0, "k": 0,
                  "l": 0, "m": 0, "n": 0, "o": 0, "p": 0, "q": 0, "r": 0, "s": 0, "t": 0, "u": 0, "v": 0,
                  "w": 0, "x": 0, "y": 0, "z": 0}
-    tweets = open("../FileTestuali/training_puliti.txt", "r")  # apro il file dei tweet
+    tweets = open("../FileTestuali/training_puliti.txt", "r")
     number = 0
-    for line in tweets.readlines():  # itero su ogni riga del file
+    for line in tweets.readlines():
         number += 1
-        x = 0  # carattere x-esimo
+        x = 0
         while ((x < len(line)) and (line[x].isalpha() == False)):
             x += 1
-        if ((x != len(line)) and (line[x].lower() in vettorePi)):  # il carattere dove mi sono fermato è nel dizionario?
-            vettorePi[line[x].lower()] += 1  # aumenta il contatore della sua lettera
-    # normalizzo
+        if ((x != len(line)) and (line[x].lower() in vettorePi)):
+            vettorePi[line[x].lower()] += 1
+
     for y in vettorePi:
         vettorePi[y] = (float(vettorePi[y]) / float(number))
 
@@ -37,20 +28,14 @@ def calcolo_vettore_pi():
 
     return (vettorePi)
 
-#-----------------------------------------------------------------------------------------------------------------------#
-
-# CALCOLO DELLA MATRICE DELLE TRANSIZIONI T (transizioni da uno stato all'altro)
-
 def calcolo_matrice_transizioni():
-    # Apro il file dei tweet puliti
     tweets = open("../FileTestuali/training_puliti.txt", "r")
 
     number = 0
-    # Definisco una matrice di supporto 27x27
     matrice_T = numpy.zeros((27, 27))
-    # Conto il numero di volte in cui da una lettera vado in un'altra lettera
-    for line in tweets.readlines():  # per ogni tweets
-        for i in range(1, len(line)):  # per ogni carattere del tweet considerato
+
+    for line in tweets.readlines():
+        for i in range(1, len(line)):
             previous_character = line[i - 1].lower()
             character = line[i].lower()
             if ((character.isalpha() == True) and (previous_character.isalpha() == True)):
@@ -62,23 +47,19 @@ def calcolo_matrice_transizioni():
                     if ((previous_character.isspace() == True) and (character.isalpha() == True)):
                         matrice_T[(26, ord(character) - ord('a'))] += 1
 
-    for i in range(0, matrice_T.shape[0]-1): #normalizzo per riga
+    for i in range(0, matrice_T.shape[0]):
         matrice_T[i, 0:matrice_T.shape[1]] = matrice_T[i, 0:matrice_T.shape[1]] / matrice_T[i, 0:matrice_T.shape[1]].sum()
 
     tweets.close()
 
     return (matrice_T)
-#-----------------------------------------------------------------------------------------------------------------------#
-
-# CALCOLO DELLA MATRICE DELLE OSSERVAZIONI O (probabilità di osservare qualcosa dato che sono in uno stato)
 
 def calcolo_matrice_osservazioni():
     tweets = open("../FileTestuali/training_sporchi.txt", "r")
-    # Definisco una matrice di supporto 27x27
     matrice_O = numpy.zeros((27, 27))
-    # Conto il numero di volte in cui da una lettera vado in un'altra lettera
-    for line in tweets.readlines():  # per ogni tweets
-        for i in range(1, len(line)):  # per ogni carattere del tweet considerato
+
+    for line in tweets.readlines():
+        for i in range(1, len(line)):
             previous_character = line[i - 1].lower()
             character = line[i].lower()
             if ((character.isalpha() == True) and (previous_character.isalpha() == True)):
@@ -90,14 +71,14 @@ def calcolo_matrice_osservazioni():
                     if ((previous_character.isspace() == True) and (character.isalpha() == True)):
                         matrice_O[(26, ord(character) - ord('a'))] += 1
 
-    for i in range(0, matrice_O.shape[0]-1): #normalizzo per riga
+    for i in range(0, matrice_O.shape[0]):
         matrice_O[i, 0:matrice_O.shape[1]] = matrice_O[i, 0:matrice_O.shape[1]] / matrice_O[i, 0:matrice_O.shape[1]].sum()
 
     tweets.close()
 
     return (matrice_O)
 
-def creazione_modello(matrice_T, matrice_O, vettore_Pi):
+"""def creazione_modello(matrice_T, matrice_O, vettore_Pi):
 
     d1 = DiscreteDistribution({
         'A':matrice_O[0,0], 'B':matrice_O[0,1], 'C':matrice_O[0,2], 'D':matrice_O[0,3], 'E':matrice_O[0,4],
@@ -144,7 +125,7 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     model.add_transition(s2, s2, matrice_T[1,1])
     model.add_transition(s2, s3, matrice_T[1,2])
     model.add_transition(s3, s1, matrice_T[2,0])
-    model.add_transition(s3, s2, matrice_T[2,0])
+    model.add_transition(s3, s2, matrice_T[2,1])
     model.add_transition(s3, s3, matrice_T[2,2])
 
     model.bake()
@@ -164,11 +145,50 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     emissions, transitions = model.forward_backward(list('CAB'))
     print("FORWARD BACKWARD")
     print("emissions = ", emissions)
-    print("transitions = ", transitions)
+    print("transitions = ", transitions)"""
 
-#-----------------------------------------------------------------------------------------------------------------------#
+def funzione(matrice):
+    lista = list()
+    for i in range(97, 124):
+        for j in range(97, 124):
+            if(j == 97):
+                data=[{}]
+            if (j != 123):
+                data[0][chr(j)] = matrice[i-97, j-97]
+            else:
+                data[0]['space'] = matrice[i-97, j-97]
+        lista.append(json.dumps(data, sort_keys = True))
+
+    return (lista)
+
+def creazione_modello(matrice_T, matrice_O, vettore_Pi):
+    T = funzione(matrice_T)
+    O = funzione(matrice_O)
+
+    d = list()
+    for i in range(0, 27):
+        d.append(DiscreteDistribution(ast.literal_eval(O[i][1:len(O[i])-1])))
+
+    s = list()
+    for j in range(0, 27):
+        if(j != 26):
+            s.append(State(d[j], name = "Stato Lettera " + chr(j+97) ))
+        else:
+            s.append(State(d[j], name = "Stato Lettera Space" ))
+
+    model = HiddenMarkovModel('Prova')
+    model.add_states(s)
+    for i in range(0, 26):
+        model.add_transition(model.start, s[i], vettore_Pi.get(chr(i+97)))
+
+    for i in range(0, 27):
+        for j in range(0, 27):
+            model.add_transition(s[i], s[j], matrice_T[i, j])
+
+    print s[0]
 
 # Chiamate delle funzioni che calcolano il vettore pi, la matrice T e la matrice O
+
 vettore_Pi = calcolo_vettore_pi()
 matrice_T = calcolo_matrice_transizioni()
 matrice_O = calcolo_matrice_osservazioni()
