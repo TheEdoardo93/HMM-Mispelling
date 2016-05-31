@@ -28,6 +28,13 @@ class Application(Frame):
         self.exit_button["command"] = self.exitApplication
         self.exit_button.grid(row = 4, column = 0, sticky = W)
 
+        self.bottone_prova = Button(self, text = "prova")
+        self.bottone_prova["command"] = self.prova
+        self.bottone_prova.grid(row = 5, column = 0, sticky = W)
+
+    def prova(self):
+        #exec(open("./prova.py").read()) #qua devo chiamare viterbi
+
     def viterbi(self):
         text = self.entry_text.get()
         message = "sequenza di stati piu' probabile"
