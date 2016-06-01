@@ -1,5 +1,5 @@
 #coding: utf-8
-
+#this is a test
 from numpy import character
 import numpy
 from array import *
