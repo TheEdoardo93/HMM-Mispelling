@@ -56,27 +56,29 @@ def calcolo_matrice_transizioni():
     return (matrice_T)
 
 def calcolo_matrice_osservazioni():
-    tweets = open("./PerturbazioneTweet/training_sporchi.txt", "r")
+    training_sporchi = open("./PerturbazioneTweet/training_sporchi.txt", "r")
+    training_puliti = open("./PerturbazioneTweet/training_puliti.txt", "r")
     matrice_O = numpy.zeros((27, 27))
-
-    for line in tweets.readlines():
-        for i in range(1, len(line)):
-            previous_character = line[i - 1].lower()
-            character = line[i].lower()
-            if ((character.isalpha() == True) and (previous_character.isalpha() == True)):
-                matrice_O[(ord(previous_character) - ord('a'), ord(character) - ord('a'))] += 1
+    lines_pulite=training_puliti.readlines()
+    numLine=0
+    
+    for line in training_sporchi.readlines() :
+        for i in range(0, len(line)):
+            char_dirty = line[i].lower()
+            #print char_dirty
+            char_clean = lines_pulite[numLine][i].lower() #rappresenta lo stato in cui sono
+            #print char_clean
+            if (char_dirty.isalpha() == True):
+                matrice_O[(ord(char_clean) - ord('a'), ord(char_dirty) - ord('a'))] += 1
             else:
-                if ((previous_character.isalpha() == True) and (character.isspace() == True)):
-                    matrice_O[(ord(previous_character) - ord('a'), 26)] +=  1
-                else:
-                    if ((previous_character.isspace() == True) and (character.isalpha() == True)):
-                        matrice_O[(26, ord(character) - ord('a'))] += 1
+                if (char_dirty.isspace() == True): #questo if è inutile
+                    matrice_O[26, 26] +=  1
+        numLine += 1
 
     for i in range(0, matrice_O.shape[0]):
         matrice_O[i, 0:matrice_O.shape[1]] = matrice_O[i, 0:matrice_O.shape[1]] / matrice_O[i, 0:matrice_O.shape[1]].sum()
 
-    tweets.close()
-
+    training_sporchi.close()
     return (matrice_O)
 
 
@@ -99,21 +101,19 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     T = matrix_to_json(matrice_T)
     O = matrix_to_json(matrice_O)
 
-    d = list()
+    dists = list()
     for i in range(0, 27):
-        d.append(DiscreteDistribution(ast.literal_eval(O[i][1:len(O[i])-1])))
-        
-    #pi = DiscreteDistribution(vettore_Pi)   #dobbiamo assegnare una distribuzione a pi     
-    
-    s = list()
+        dists.append(DiscreteDistribution(ast.literal_eval(O[i][1:len(O[i])-1])))
+          
+    states = list()
     for j in range(0, 27):
         if(j != 26):
-            s.append(State(d[j], name = ""+chr(j+97) ))
+            states.append(State(dists[j], name = ""+chr(j+97) ))
         else:
-            s.append(State(d[j], name = "Space" ))
+            states.append(State(dists[j], name = "Space" ))
 
     model = HiddenMarkovModel('mispelling')
-    model.add_states(s)
+    model.add_states(states)
     
     #pi = json.loads(pi.to_json())
     #pi = pi['parameters']  
@@ -122,18 +122,18 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
         
     for i in range(0, 27):
         for j in range(0, 27):
-            model.add_transition(s[i], s[j], matrice_T[i, j])
+            model.add_transition(states[i], states[j], matrice_T[i, j])
     
     for i in range(0, 26):
-        model.add_transition(model.start, s[i], vettore_Pi[chr(i+97)])
+        model.add_transition(model.start, states[i], vettore_Pi[chr(i+97)])
      
     model.bake()
     #model.draw()
     
 
-    logp, path = model.viterbi(list("the "))
+    logp, path = model.viterbi(list("you cpuld find even"))
     print("VITERBI")
-    print("logp = ", logp)
+    #print("logp = ", logp)
     print("path = ", path)
     
 # Chiamate delle funzioni che calcolano il vettore pi, la matrice T e la matrice O
