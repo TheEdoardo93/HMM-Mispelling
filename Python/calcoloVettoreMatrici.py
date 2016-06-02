@@ -185,7 +185,8 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
         for j in range(0, 27):
             model.add_transition(s[i], s[j], matrice_T[i, j])
 
-    print s[0]
+    #print s[0]
+    model.bake()
 
 # Chiamate delle funzioni che calcolano il vettore pi, la matrice T e la matrice O
 
