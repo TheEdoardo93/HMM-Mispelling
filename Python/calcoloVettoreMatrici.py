@@ -93,7 +93,7 @@ def matrix_to_json(matrice):
             else:
                 data[0][chr(32)] = matrice[i-97, j-97]
         lista.append(json.dumps(data, sort_keys = True))
-
+    
     return (lista)
 
 
@@ -131,10 +131,17 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     #model.draw()
     
 
-    logp, path = model.viterbi(list("you cpuld find even"))
+    logp, path = model.viterbi(list("zs yoi see thrre ix a sea begween you abd mr"))
     print("VITERBI")
-    #print("logp = ", logp)
-    print("path = ", path)
+    
+    x=""    
+    for i in range(1, len(path)):
+        if (json.loads(ast.literal_eval(json.dumps(str(path[i][1]), sort_keys= False))).get('name') == 'Space'):
+            x = x+ " "
+        else:
+            x = x+""+json.loads(ast.literal_eval(json.dumps(str(path[i][1]), sort_keys= False))).get('name')
+    
+    print x
     
 # Chiamate delle funzioni che calcolano il vettore pi, la matrice T e la matrice O
 
