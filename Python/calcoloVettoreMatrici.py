@@ -1,5 +1,6 @@
 #coding: utf-8
 #another test
+#conflitti
 from numpy import character
 import numpy
 from array import *
