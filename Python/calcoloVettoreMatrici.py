@@ -81,17 +81,18 @@ def calcolo_matrice_osservazioni():
 
 def matrix_to_json(matrice):
     lista = list()
-    for i in range(97, 124): #a,z in ascii
+    for i in range(97, 124):
         for j in range(97, 124):
             if(j == 97):
                 data=[{}]
             if (j != 123):
                 data[0][chr(j)] = matrice[i-97, j-97]
             else:
-                data[0]['space'] = matrice[i-97, j-97]
+                data[0][chr(32)] = matrice[i-97, j-97]
         lista.append(json.dumps(data, sort_keys = True))
 
     return (lista)
+
 
 def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     T = matrix_to_json(matrice_T)
@@ -124,7 +125,7 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     
     for i in range(0, 26):
         model.add_transition(model.start, s[i], vettore_Pi[chr(i+97)])
-
+     
     model.bake()
     #model.draw()
     
@@ -133,7 +134,7 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     print("VITERBI")
     print("logp = ", logp)
     print("path = ", path)
-
+    
 # Chiamate delle funzioni che calcolano il vettore pi, la matrice T e la matrice O
 
 vettore_Pi = calcolo_vettore_pi()
