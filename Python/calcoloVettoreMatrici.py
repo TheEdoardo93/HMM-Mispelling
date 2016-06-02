@@ -100,24 +100,39 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     d = list()
     for i in range(0, 27):
         d.append(DiscreteDistribution(ast.literal_eval(O[i][1:len(O[i])-1])))
-
+        
+    #pi = DiscreteDistribution(vettore_Pi)   #dobbiamo assegnare una distribuzione a pi     
+    
     s = list()
     for j in range(0, 27):
         if(j != 26):
-            s.append(State(d[j], name = "" + chr(j+97) ))
+            s.append(State(d[j], name = ""+chr(j+97) ))
         else:
             s.append(State(d[j], name = "Space" ))
 
-    model = HiddenMarkovModel('Prova')
+    model = HiddenMarkovModel('mispelling')
     model.add_states(s)
-    for i in range(0, 26):
-        model.add_transition(model.start, s[i], vettore_Pi.get(chr(i+97)))
-
+    
+    #pi = json.loads(pi.to_json())
+    #pi = pi['parameters']  
+    #print pi[0]['z']  
+    
+        
     for i in range(0, 27):
         for j in range(0, 27):
             model.add_transition(s[i], s[j], matrice_T[i, j])
+    
+    for i in range(0, 26):
+        model.add_transition(model.start, s[i], vettore_Pi[chr(i+97)])
 
-    print s[0]
+    model.bake()
+    #model.draw()
+    
+
+    logp, path = model.viterbi(list("the "))
+    print("VITERBI")
+    print("logp = ", logp)
+    print("path = ", path)
 
 # Chiamate delle funzioni che calcolano il vettore pi, la matrice T e la matrice O
 
