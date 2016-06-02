@@ -100,6 +100,7 @@ def matrix_to_json(matrice):
 def creazione_modello(matrice_T, matrice_O, vettore_Pi):
     T = matrix_to_json(matrice_T)
     O = matrix_to_json(matrice_O)
+    print T
 
     dists = list()
     for i in range(0, 27):
