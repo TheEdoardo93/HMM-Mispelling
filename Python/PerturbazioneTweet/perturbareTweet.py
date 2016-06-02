@@ -6,7 +6,7 @@ import random
 import string
 
 def perturbazione_tweets():
-    tweets = open("../FileTestuali/tweet_puliti.txt", "r")
+    tweets = open("./tweet_puliti.txt", "r")
     write_file = open("../FileTestuali/tweet_sporchi.txt", "w")
     dict_neighbors = {"q": "qwsxz", "w": "qasde", "e": "wsdfr", "r": "edfgt", "t": "rfghy", "y": "tghju", "u": "yhjki", "i": "ujklo", "o": "iklp",
                       "p": "ol", "a": "qwsxz", "s": "qazxcdew", "d": "wsxcvfre", "f": "edcvbgtr", "g": "rfvbnhyt", "h": "tgbnmjuy", "j": "yhnmkiu",
@@ -36,14 +36,14 @@ def perturbazione_tweets():
     write_file.close()
 
 def dividere_tweets():
-    tweets_puliti = open("../FileTestuali/tweet_puliti.txt", "r")
-    tweets_sporchi = open("../FileTestuali/tweet_sporchi.txt", "r")
+    tweets_puliti = open("./tweet_puliti.txt", "r")
+    tweets_sporchi = open("./tweet_sporchi.txt", "r")
 
-    num_lines = sum(1 for line in open('../FileTestuali/tweet_puliti.txt'))
+    num_lines = sum(1 for line in open('./tweet_puliti.txt'))
     num_lines_training = int(0.8 * num_lines)
 
-    training_file_puliti = open("../FileTestuali/training_puliti.txt", "w")
-    testing_file_puliti = open("../FileTestuali/testing_puliti.txt", "w")
+    training_file_puliti = open("./training_puliti.txt", "w")
+    testing_file_puliti = open("./testing_puliti.txt", "w")
 
     number_of_line = 1
     for line in tweets_puliti.readlines():
@@ -53,8 +53,8 @@ def dividere_tweets():
             testing_file_puliti.write(line)
         number_of_line = (number_of_line + 1)
 
-    testing_file_sporchi = open("../FileTestuali/testing_sporchi.txt", "w")
-    training_file_sporchi = open("../FileTestuali/training_sporchi.txt", "w")
+    testing_file_sporchi = open("./testing_sporchi.txt", "w")
+    training_file_sporchi = open("./training_sporchi.txt", "w")
 
     number_of_line = 1
     for line in tweets_sporchi.readlines():
