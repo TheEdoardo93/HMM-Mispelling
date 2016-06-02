@@ -7,7 +7,7 @@ import string
 
 def perturbazione_tweets():
     tweets = open("./tweet_puliti.txt", "r")
-    write_file = open("../FileTestuali/tweet_sporchi.txt", "w")
+    write_file = open("./tweet_sporchi.txt", "w")
     dict_neighbors = {"q": "qwsxz", "w": "qasde", "e": "wsdfr", "r": "edfgt", "t": "rfghy", "y": "tghju", "u": "yhjki", "i": "ujklo", "o": "iklp",
                       "p": "ol", "a": "qwsxz", "s": "qazxcdew", "d": "wsxcvfre", "f": "edcvbgtr", "g": "rfvbnhyt", "h": "tgbnmjuy", "j": "yhnmkiu",
                       "k": "ujmloi", "l": "poik", "z": "asx", "x": "zasdc", "c": "xsdfv", "v": "cdfgb", "b": "vfghn", "n": "bghjm", "m": "nhjk"}

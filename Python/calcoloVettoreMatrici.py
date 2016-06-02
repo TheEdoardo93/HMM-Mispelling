@@ -11,7 +11,7 @@ def calcolo_vettore_pi():
     vettorePi = {"a": 0, "b": 0, "c": 0, "d": 0, "e": 0, "f": 0, "g": 0, "h": 0, "i": 0, "j": 0, "k": 0,
                  "l": 0, "m": 0, "n": 0, "o": 0, "p": 0, "q": 0, "r": 0, "s": 0, "t": 0, "u": 0, "v": 0,
                  "w": 0, "x": 0, "y": 0, "z": 0}
-    tweets = open("../FileTestuali/training_puliti.txt", "r")
+    tweets = open("./PerturbazioneTweet/training_puliti.txt", "r")
     number = 0
     for line in tweets.readlines():
         number += 1
@@ -29,7 +29,7 @@ def calcolo_vettore_pi():
     return (vettorePi)
 
 def calcolo_matrice_transizioni():
-    tweets = open("../FileTestuali/training_puliti.txt", "r")
+    tweets = open("./PerturbazioneTweet/training_puliti.txt", "r")
 
     number = 0
     matrice_T = numpy.zeros((27, 27))
@@ -55,7 +55,7 @@ def calcolo_matrice_transizioni():
     return (matrice_T)
 
 def calcolo_matrice_osservazioni():
-    tweets = open("../FileTestuali/training_sporchi.txt", "r")
+    tweets = open("./PerturbazioneTweet/training_sporchi.txt", "r")
     matrice_O = numpy.zeros((27, 27))
 
     for line in tweets.readlines():
@@ -147,9 +147,9 @@ def calcolo_matrice_osservazioni():
     print("emissions = ", emissions)
     print("transitions = ", transitions)"""
 
-def funzione(matrice):
+def matrix_to_json(matrice):
     lista = list()
-    for i in range(97, 124):
+    for i in range(97, 124): #a,z in ascii
         for j in range(97, 124):
             if(j == 97):
                 data=[{}]
@@ -162,8 +162,8 @@ def funzione(matrice):
     return (lista)
 
 def creazione_modello(matrice_T, matrice_O, vettore_Pi):
-    T = funzione(matrice_T)
-    O = funzione(matrice_O)
+    T = matrix_to_json(matrice_T)
+    O = matrix_to_json(matrice_O)
 
     d = list()
     for i in range(0, 27):
