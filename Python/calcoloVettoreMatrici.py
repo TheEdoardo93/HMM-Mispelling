@@ -1,5 +1,5 @@
 #coding: utf-8
-#this is a test on branch Omar
+#conflitti
 from numpy import character
 import numpy
 from array import *
