@@ -8,6 +8,10 @@ from pomegranate import *
 import json
 import ast
 import editdistance
+from progressbar import AnimatedMarker, Bar, BouncingBar, Counter, ETA, \
+    FileTransferSpeed, FormatLabel, Percentage, \
+    ProgressBar, ReverseBar, RotatingMarker, \
+    SimpleProgress, Timer
 
 def calcolo_vettore_pi():
     vettorePi = {"a": 0, "b": 0, "c": 0, "d": 0, "e": 0, "f": 0, "g": 0, "h": 0, "i": 0, "j": 0, "k": 0,
@@ -156,14 +160,13 @@ def test(model):
     testing_sporchi = open("./PerturbazioneTweet/testing_sporchi.txt", "r")
     testing_puliti = open("./PerturbazioneTweet/testing_puliti.txt", "r")
     
-     
+    prgbar=0
     numchars = 0.0   
     for line in testing_puliti.readlines():
-        print len(line)
+        prgbar += 1
         for i in range(0, len(line)):
             if(line[i].isalpha()):
                 numchars = numchars + 1.0
-    print numchars
     
     testing_puliti.close()
     testing_puliti = open("./PerturbazioneTweet/testing_puliti.txt", "r")    
@@ -172,7 +175,10 @@ def test(model):
     unlist = ['\x82', '\xac','\x87', '\xbd', '\xbe', '\xb6', '\xa4', '\xc5', '\x9f', '\xc4', '\xb1', '\xc3', '\xbc', '\xa3', '$', '\x98', '%', '\xa6', '\x9c', '\x9d', '|', ']', '[', '_', '\xc2', '\xa0', '\x99', ';', '+', '=', '*', '\xe2', '\x80', '\x94','?', '\n', ':', '\'', '/', '!', ',', '.', '-', '"', '(', ')', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
     numLine=0   
     editDistance = 0.0
+    pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=prgbar).start()
+    contatore = 0
     for line in testing_sporchi.readlines(): 
+        
         x=''.join(delete__by_values(list(line.lower()), unlist))
         y = ''.join(delete__by_values(lines_pulite[numLine].lower(), unlist))
         
@@ -186,11 +192,15 @@ def test(model):
                     newL = newL -1
                 else:
                     j = j + 1
+                    
                    
         x = inferenza(model, list(x))        
                                         
         editDistance += editdistance.eval(y, x)
         numLine += 1
+        contatore = contatore +1
+        pbar.update(contatore)
+    pbar.finish()
     
     testing_sporchi.close()
     testing_puliti.close()
