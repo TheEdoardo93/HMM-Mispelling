@@ -65,7 +65,6 @@ def calcolo_matrice_osservazioni():
     training_puliti = open("./PerturbazioneTweet/training_puliti.txt", "r")
     matrice_O = numpy.zeros((27, 27))
     lines_pulite=training_puliti.readlines()
-    
     numLine=0
     
     for line in training_sporchi.readlines() :
