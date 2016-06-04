@@ -160,6 +160,8 @@ def test(model):
     testing_sporchi = open("./PerturbazioneTweet/testing_sporchi.txt", "r")
     testing_puliti = open("./PerturbazioneTweet/testing_puliti.txt", "r")
     
+    
+    #Conto numero dei caratteri all'interno del set di training di tweet
     prgbar=0
     numchars = 0.0   
     for line in testing_puliti.readlines():
@@ -175,8 +177,12 @@ def test(model):
     unlist = ['\x82', '\xac','\x87', '\xbd', '\xbe', '\xb6', '\xa4', '\xc5', '\x9f', '\xc4', '\xb1', '\xc3', '\xbc', '\xa3', '$', '\x98', '%', '\xa6', '\x9c', '\x9d', '|', ']', '[', '_', '\xc2', '\xa0', '\x99', ';', '+', '=', '*', '\xe2', '\x80', '\x94','?', '\n', ':', '\'', '/', '!', ',', '.', '-', '"', '(', ')', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
     numLine=0   
     editDistance = 0.0
+    print "#######################################################################################################"
+    print "############################## Calcolo Viterbi sul testing set di tweets ##############################"
+    print "#######################################################################################################"
     pbar = ProgressBar(widgets=[Percentage(), Bar()], maxval=prgbar).start()
     contatore = 0
+    #calcolo le edit distance tra tweet di testing puliti e sporchi
     for line in testing_sporchi.readlines(): 
         
         x=''.join(delete__by_values(list(line.lower()), unlist))
@@ -204,7 +210,8 @@ def test(model):
     
     testing_sporchi.close()
     testing_puliti.close()
-    print editDistance
+    print "Numero di caratteri all'interno del training set: "+str(numchars)
+    print "Edit Distance tra tweets di training puliti e sporchi: "+str(editDistance)
     return (editDistance/numchars)
    
     
@@ -218,4 +225,4 @@ model = creazione_modello(matrice_T, matrice_O, vettore_Pi)
 #inferenza(model, list("zs yoi see thwre ix a sea begween you abd mr"))
 #inferenza(model, list("qe zll ljvr ih tue ywllow xubmarine"))
 errore = test(model)
-print errore
+print "Capacità predittiva del modello(editDistance/numberOfChars): "+str(errore)
