@@ -134,6 +134,7 @@ def creazione_modello(matrice_T, matrice_O, vettore_Pi):
      
     model.bake()
     #model.draw()
+    print model
     return model
     
 def delete__by_values(lst, values):
