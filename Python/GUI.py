@@ -17,11 +17,12 @@ class Handler:
         start_iter = builder.get_object("textview").get_buffer().get_start_iter()
         end_iter = builder.get_object("textview").get_buffer().get_end_iter()
         #print builder.get_object("textview").get_buffer().get_text(start_iter, end_iter, True)
-        sequenza = calcolatore.inferenza(modello, builder.get_object("textview").get_buffer().get_text(start_iter, end_iter, True))
+        sequenza = calcolatore.inferenza(modello, builder.get_object("textview").get_buffer().get_text(start_iter, end_iter, True).lower())
         builder.get_object("textview2").get_buffer().set_text(sequenza)     
         
     def pulisci_clicked(self, button):
         builder.get_object("textview").get_buffer().set_text("")
+        builder.get_object("textview2").get_buffer().set_text("")
 
     
 #Chiamate alle procedure per calcolare il vettore pi, le matrici T e O e per creare il modello
