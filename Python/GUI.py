@@ -55,6 +55,7 @@ pi = calcolatore.calcolo_vettore_pi()
 matrice_T = calcolatore.calcolo_matrice_transizioni()
 matrice_O = calcolatore.calcolo_matrice_osservazioni()
 modello = calcolatore.creazione_modello(matrice_T, matrice_O, pi)
+print calcolatore.test(modello)
 
 #Settaggi della GUI (e.g. nome della finestra della GUI e la sua dimensione)
 root = Tk()
