@@ -20,14 +20,15 @@ class calcoloVettoreMatrici():
     def calcolo_vettore_pi(self):
         vettorePi = {"a": 0, "b": 0, "c": 0, "d": 0, "e": 0, "f": 0, "g": 0, "h": 0, "i": 0, "j": 0, "k": 0,
                      "l": 0, "m": 0, "n": 0, "o": 0, "p": 0, "q": 0, "r": 0, "s": 0, "t": 0, "u": 0, "v": 0,
-                     "w": 0, "x": 0, "y": 0, "z": 0}
+                     "w": 0, "x": 0, "y": 0, "z": 0, "'" : 0 }
         tweets = open("./PerturbazioneTweet/training_puliti.txt", "r")
         number = 0
         for line in tweets.readlines():
             number += 1
             x = 0
-            while ((x < len(line)) and (line[x].isalpha() == False)):
-                x += 1
+            while (x < len(line)) and (line[x].isalpha() == False):
+                x = x + 1
+
             if ((x != len(line)) and (line[x].lower() in vettorePi)):
                 vettorePi[line[x].lower()] += 1
     
@@ -42,7 +43,7 @@ class calcoloVettoreMatrici():
         tweets = open("./PerturbazioneTweet/training_puliti.txt", "r")
     
         number = 0
-        matrice_T = numpy.zeros((27, 27))
+        matrice_T = numpy.zeros((28, 28))
     
         for line in tweets.readlines():
             for i in range(1, len(line)):
@@ -50,16 +51,27 @@ class calcoloVettoreMatrici():
                 character = line[i].lower()
                 if ((character.isalpha() == True) and (previous_character.isalpha() == True)):
                     matrice_T[(ord(previous_character) - ord('a'), ord(character) - ord('a'))] += 1
-                else:
+                elif (character.isspace() == True) or (previous_character.isspace() == True):
                     if ((previous_character.isalpha() == True) and (character.isspace() == True)):
-                        matrice_T[(ord(previous_character) - ord('a'), 26)] +=  1
+                        matrice_T[(ord(previous_character) - ord('a'), 26)] +=  1.0
+                    elif ((previous_character.isspace() == True) and (character.isalpha() == True)):
+                        matrice_T[(26, ord(character) - ord('a'))] += 1.0
+                    elif ((previous_character.isspace() == True) and (character == '\'')):
+                        matrice_T[26, 27] += 1.0
+                    elif ((character.isspace() == True) and (previous_character == '\'')):
+                        matrice_T[27, 26] += 1.0
+                    
+                else:
+                    if ((previous_character.isalpha() == True) and (character == '\'')):
+                        matrice_T[(ord(previous_character) - ord('a'), 27)] +=  1.0
                     else:
-                        if ((previous_character.isspace() == True) and (character.isalpha() == True)):
-                            matrice_T[(26, ord(character) - ord('a'))] += 1
+                        if ((previous_character == '\'') and (character.isalpha() == True)):
+                            matrice_T[(27, ord(character) - ord('a'))] += 1.0
+                    
     
         for i in range(0, matrice_T.shape[0]):
             matrice_T[i, 0:matrice_T.shape[1]] = matrice_T[i, 0:matrice_T.shape[1]] / matrice_T[i, 0:matrice_T.shape[1]].sum()
-    
+        
         tweets.close()
     
         return (matrice_T)
@@ -67,7 +79,7 @@ class calcoloVettoreMatrici():
     def calcolo_matrice_osservazioni(self):
         training_sporchi = open("./PerturbazioneTweet/training_sporchi.txt", "r")
         training_puliti = open("./PerturbazioneTweet/training_puliti.txt", "r")
-        matrice_O = numpy.zeros((27, 27))
+        matrice_O = numpy.zeros((28, 28))
         lines_pulite=training_puliti.readlines()
         numLine=0
         
@@ -82,27 +94,32 @@ class calcoloVettoreMatrici():
                 else:
                     if (char_dirty.isspace() == True): #questo if è inutile
                         matrice_O[26, 26] +=  1
+                    elif(char_dirty == '\''):
+                        matrice_O[27, 27] += 1
             numLine += 1
     
         for i in range(0, matrice_O.shape[0]):
             matrice_O[i, 0:matrice_O.shape[1]] = matrice_O[i, 0:matrice_O.shape[1]] / matrice_O[i, 0:matrice_O.shape[1]].sum()
-    
+        
         training_sporchi.close()
         return (matrice_O)
     
     
     def matrix_to_json(self, matrice):
         lista = list()
-        for i in range(97, 124):
-            for j in range(97, 124):
+        for i in range(97, 125):
+            for j in range(97, 125):
                 if(j == 97):
                     data=[{}]
-                if (j != 123):
+                if (j < 123):
                     data[0][chr(j)] = matrice[i-97, j-97]
                 else:
-                    data[0][chr(32)] = matrice[i-97, j-97]
+                    if(j == 123):
+                        data[0][chr(32)] = matrice[i-97, j-97]
+                    else:
+                        data[0][chr(39)] = matrice[i-97, j-97]
+                        
             lista.append(json.dumps(data, sort_keys = True))
-        
         return (lista)
     
     
@@ -111,15 +128,20 @@ class calcoloVettoreMatrici():
         O = self.matrix_to_json(matrice_O)
     
         dists = list()
-        for i in range(0, 27):
+        for i in range(0, 28):
             dists.append(DiscreteDistribution(ast.literal_eval(O[i][1:len(O[i])-1])))
+        
               
         states = list()
-        for j in range(0, 27):
-            if(j != 26):
+        for j in range(0, 28):
+            if(j < 26):
                 states.append(State(dists[j], name = ""+chr(j+97) ))
             else:
-                states.append(State(dists[j], name = "Space" ))
+                if(j == 26):
+                    states.append(State(dists[j], name = "Space" ))
+                elif(j == 27):
+                    states.append(State(dists[j], name = '\'' ))
+                           
     
         model = HiddenMarkovModel('mispelling')
         model.add_states(states)
@@ -129,8 +151,8 @@ class calcoloVettoreMatrici():
         #print pi[0]['z']  
         
             
-        for i in range(0, 27):
-            for j in range(0, 27):
+        for i in range(0, 28):
+            for j in range(0, 28):
                 model.add_transition(states[i], states[j], matrice_T[i, j])
         
         for i in range(0, 26):
@@ -182,7 +204,7 @@ class calcoloVettoreMatrici():
                    '\xc5', '\x9f', '\xc4', '\xb1', '\xc3', '\xbc', '\xa3',
                     '$', '\x98', '%', '\xa6', '\x9c', '\x9d', '|', ']', 
                     '[', '_', '\xc2', '\xa0', '\x99', ';', '+', '=', '*',
-                     '\xe2', '\x80', '\x94','?', '\n', ':', '\'', '/', '!', 
+                     '\xe2', '\x80', '\x94','?', '\n', ':', '/', '!', 
                      ',', '.', '-', '"', '(', ')', '1', '2', '3', '4', '5', 
                      '6', '7', '8', '9', '0']
         numLine=0   
@@ -198,9 +220,13 @@ class calcoloVettoreMatrici():
             x=''.join(self.delete__by_values(list(line.lower()), unlist))
             y = ''.join(self.delete__by_values(lines_pulite[numLine].lower(), unlist))
             
+            if list(x)[0] == "'":
+                x = ''.join(list(x)[1:len(x)])
+                y = ''.join(list(y)[1:len(y)])
+            
             newL=len(x)-1      
             j = 0  
-            for i in range(0, len(x)-1):
+            for i in range(0, len(x)-1):                
                 if(newL > i):
                     if(x[j].isspace() and x[j + 1].isspace()):                    
                         x = x[0:j]+x[j+2:len(x)]
@@ -208,9 +234,8 @@ class calcoloVettoreMatrici():
                         newL = newL -1
                     else:
                         j = j + 1
-                        
-                       
-            x = self.inferenza(model, list(x))        
+                  
+            x = self.inferenza(model, list(x))
                                             
             editDistance += editdistance.eval(y, x)
             numLine += 1
