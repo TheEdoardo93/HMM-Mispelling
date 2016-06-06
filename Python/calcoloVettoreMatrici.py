@@ -219,7 +219,7 @@ class calcoloVettoreMatrici():
             
             x=''.join(self.delete__by_values(list(line.lower()), unlist))
             y = ''.join(self.delete__by_values(lines_pulite[numLine].lower(), unlist))
-            print list(y)
+            
             if list(x)[0] == "'":
                 x = ''.join(list(x)[1:len(x)])
                 y = ''.join(list(y)[1:len(y)])
