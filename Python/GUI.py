@@ -1,66 +1,44 @@
 #coding utf-8
 
-from Tkinter import *
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GdkPixbuf
 
 #Importo lo script .py dove ci sono le funzioni che servono
 import calcoloVettoreMatrici
 
-class Application(Frame):
+class Handler:
     """GUI (Graphical User Interface)"""
-
-    #Initialize the GUI
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        self.grid()
-        self.createWidgets()
-
-    #Procedura che carica i vari oggetti sulla GUI (e.g. bottoni, edit-text)
-    def createWidgets(self):
-        self.label_insertText = Label(self, text = "Inserisci il testo:")
-        self.label_insertText.grid(row = 0, column = 0, columnspan = 2, sticky = W)
-
-        self.entry_text = Entry(self)
-        self.entry_text.grid(row = 1, column = 0, sticky = W)
-
-        self.button_submit = Button(self, text = "Correggi", command = self.viterbiAlgorithm)
-        self.button_submit.grid(row = 2, column = 0, sticky = W)
-        
-        self.button_deleteText = Button(self, text = "Cancella il Testo Inserito", command = self.deleteText)
-        self.button_deleteText.grid(row = 1, column = 2, sticky = W)
-
-        self.correct_text = Text(self, width = 23, height = 1)
-        self.correct_text.grid(row = 3, column = 0, sticky = W)
-
-        self.exit_button = Button(self, text = "Esci dall'Applicazione", command = self.exitApplication)
-        self.exit_button.place(relx = 1, rely = 1, anchor = "se")
-
-    #Procedura che permette di cancellare il contenuto della edit-text dove l'utente inserisce il testo
-    def deleteText(self):
-        self.entry_text.delete(0, END)
+    def window1_destroy(self, *args):
+        Gtk.main_quit(*args)
 
     #Procedura che permette di eseguire l'algoritmo di Viterbi sul testo inserito dall'utente
-    def viterbiAlgorithm(self):
-        sequenza = calcolatore.inferenza(modello, self.entry_text.get().lower())
-        #Cancello cio' che c'e' scritto nella text edit quando ho premuto il bottone "Correggi"
-        self.correct_text.delete(0.0, END)
-        #Scrivo la sequenza di stati piu' probabile nella text edit
-        self.correct_text.insert(0.0, sequenza)
+    def correggi_clicked(self, button):
+        start_iter = builder.get_object("textview").get_buffer().get_start_iter()
+        end_iter = builder.get_object("textview").get_buffer().get_end_iter()
+        #print builder.get_object("textview").get_buffer().get_text(start_iter, end_iter, True)
+        sequenza = calcolatore.inferenza(modello, builder.get_object("textview").get_buffer().get_text(start_iter, end_iter, True).lower())
+        builder.get_object("textview2").get_buffer().set_text(sequenza)     
+        
+    def pulisci_clicked(self, button):
+        builder.get_object("textview").get_buffer().set_text("")
+        builder.get_object("textview2").get_buffer().set_text("")
 
-    def exitApplication(self):
-        sys.exit() #chiude il programma, quindi tutte le finestre aperte
-
+    
 #Chiamate alle procedure per calcolare il vettore pi, le matrici T e O e per creare il modello
 calcolatore = calcoloVettoreMatrici.calcoloVettoreMatrici()
 pi = calcolatore.calcolo_vettore_pi()
 matrice_T = calcolatore.calcolo_matrice_transizioni()
 matrice_O = calcolatore.calcolo_matrice_osservazioni()
 modello = calcolatore.creazione_modello(matrice_T, matrice_O, pi)
-print calcolatore.test(modello)
+#print calcolatore.test(modello)
 
 #Settaggi della GUI (e.g. nome della finestra della GUI e la sua dimensione)
-root = Tk()
-root.title("GUI Misspelling")
-root.geometry("350x200")
+builder = Gtk.Builder()
+builder.add_from_file("HMM.glade")
+builder.connect_signals(Handler())
 
-app = Application(root)
-root.mainloop()
+window = builder.get_object("window1")
+window.show_all()
+
+Gtk.main()
