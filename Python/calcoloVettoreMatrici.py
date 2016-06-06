@@ -178,7 +178,13 @@ class calcoloVettoreMatrici():
         testing_puliti = open("./PerturbazioneTweet/testing_puliti.txt", "r")    
         lines_pulite=testing_puliti.readlines()
         
-        unlist = ['\x82', '\xac','\x87', '\xbd', '\xbe', '\xb6', '\xa4', '\xc5', '\x9f', '\xc4', '\xb1', '\xc3', '\xbc', '\xa3', '$', '\x98', '%', '\xa6', '\x9c', '\x9d', '|', ']', '[', '_', '\xc2', '\xa0', '\x99', ';', '+', '=', '*', '\xe2', '\x80', '\x94','?', '\n', ':', '\'', '/', '!', ',', '.', '-', '"', '(', ')', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+        unlist = ['\x82', '\xac','\x87', '\xbd', '\xbe', '\xb6', '\xa4',
+                   '\xc5', '\x9f', '\xc4', '\xb1', '\xc3', '\xbc', '\xa3',
+                    '$', '\x98', '%', '\xa6', '\x9c', '\x9d', '|', ']', 
+                    '[', '_', '\xc2', '\xa0', '\x99', ';', '+', '=', '*',
+                     '\xe2', '\x80', '\x94','?', '\n', ':', '\'', '/', '!', 
+                     ',', '.', '-', '"', '(', ')', '1', '2', '3', '4', '5', 
+                     '6', '7', '8', '9', '0']
         numLine=0   
         editDistance = 0.0
         print "#######################################################################################################"
@@ -189,8 +195,8 @@ class calcoloVettoreMatrici():
         #calcolo le edit distance tra tweet di testing puliti e sporchi
         for line in testing_sporchi.readlines(): 
             
-            x=''.join(delete__by_values(list(line.lower()), unlist))
-            y = ''.join(delete__by_values(lines_pulite[numLine].lower(), unlist))
+            x=''.join(self.delete__by_values(list(line.lower()), unlist))
+            y = ''.join(self.delete__by_values(lines_pulite[numLine].lower(), unlist))
             
             newL=len(x)-1      
             j = 0  
@@ -204,7 +210,7 @@ class calcoloVettoreMatrici():
                         j = j + 1
                         
                        
-            x = inferenza(model, list(x))        
+            x = self.inferenza(model, list(x))        
                                             
             editDistance += editdistance.eval(y, x)
             numLine += 1
